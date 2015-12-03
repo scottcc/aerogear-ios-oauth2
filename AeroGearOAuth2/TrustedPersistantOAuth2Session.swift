@@ -32,6 +32,7 @@ public enum TokenType: String {
     case RefreshToken = "RefreshToken"
     case ExpirationDate = "ExpirationDate"
     case RefreshExpirationDate = "RefreshExpirationDate"
+    case IdToken = "IdToken"
 }
 
 /**
@@ -289,6 +290,20 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
         }
     }
 
+    /**
+    The JWT. The information is read securely from Keychain.
+    */
+    public var idToken: String? {
+        get {
+            return self.keychain.read(self.accountId, tokenType: .IdToken)
+        }
+        set(value) {
+            if let unwrappedValue = value {
+                self.keychain.save(self.accountId, tokenType: .IdToken, value: unwrappedValue)
+            }
+        }
+    }
+
     private let keychain: KeychainWrap
 
     /**
@@ -308,9 +323,10 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
     /**
     Save in memory tokens information. Saving tokens allow you to refresh accesstoken transparently for the user without prompting for grant access.
     */
-    public func saveAccessToken(accessToken: String?, refreshToken: String?, accessTokenExpiration: String?, refreshTokenExpiration: String?) {
+    public func saveAccessToken(accessToken: String?, refreshToken: String?, accessTokenExpiration: String?, refreshTokenExpiration: String?, idToken: String?) {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
+        self.idToken = idToken
 
         let now = NSDate()
         if let inter = accessTokenExpiration?.doubleValue {
@@ -329,6 +345,7 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
         self.refreshToken = nil
         self.accessTokenExpirationDate = nil
         self.refreshTokenExpirationDate = nil
+        self.idToken = nil
     }
 
     /**

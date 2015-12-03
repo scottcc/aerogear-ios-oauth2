@@ -51,7 +51,12 @@ public class UntrustedMemoryOAuth2Session: OAuth2Session {
     The refresh token's expiration date.
     */
     public var refreshTokenExpirationDate: NSDate?
-    
+
+    /**
+    The JWT which expires.
+    */
+    public var idToken: String?
+
     /**
     Check validity of accessToken. return true if still valid, false when expired.
     */
@@ -69,7 +74,7 @@ public class UntrustedMemoryOAuth2Session: OAuth2Session {
     /**
     Save in memory tokens information. Saving tokens allow you to refresh accesstoken transparently for the user without prompting for grant access.
     */
-    public func saveAccessToken(accessToken: String?, refreshToken: String?, accessTokenExpiration: String?, refreshTokenExpiration: String?) {
+    public func saveAccessToken(accessToken: String?, refreshToken: String?, accessTokenExpiration: String?, refreshTokenExpiration: String?, idToken: String?) {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
         let now = NSDate()
