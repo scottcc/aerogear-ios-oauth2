@@ -94,7 +94,7 @@ public class Config {
     /**
     Applies the "audience" obtained with the client registration process.
     */
-    public let audienceId: String?
+    public var audienceId: String?
 
     /**
     Account id is used with AccountManager to store tokens. AccountId is defined by the end-user
