@@ -335,15 +335,22 @@ public class OAuth2Module: AuthzModule {
         let url: NSURL? = (notification.userInfo as! [String: AnyObject])[UIApplicationLaunchOptionsURLKey] as? NSURL
 
         // extract the code from the URL
-        let code = self.parametersFromQueryString(url?.query)["code"]
+        let queryParamsDict = self.parametersFromQueryString(url?.query)
+        let code = queryParamsDict["code"]
         // if exists perform the exchange
         if (code != nil) {
             self.exchangeAuthorizationCodeForAccessToken(code!, completionHandler: completionHandler)
             // update state
             state = .AuthorizationStateApproved
         } else {
+            guard let errorName = queryParamsDict["error"] else {
+                let error = NSError(domain:AGAuthzErrorDomain, code:0, userInfo:["NSLocalizedDescriptionKey": "User cancelled authorization."])
+                completionHandler(nil, error)
+                return
+            }
 
-            let error = NSError(domain:AGAuthzErrorDomain, code:0, userInfo:["NSLocalizedDescriptionKey": "User cancelled authorization."])
+            let errorDescription = queryParamsDict["error_description"] ?? "There was an error!"
+            let error = NSError(domain: AGAuthzErrorDomain, code: 1, userInfo: ["error": errorName, "errorDescription": errorDescription])
             completionHandler(nil, error)
         }
         // finally, unregister
