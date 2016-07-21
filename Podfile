@@ -5,7 +5,7 @@ platform :ios, '8.0'
 use_frameworks!
 
 target 'AeroGearOAuth2' do
-  pod 'AeroGearHttp', '0.6.0'
+  pod 'AeroGearHttp', git: 'https://github.com/410Labs/aerogear-ios-http.git'
 
   target 'AeroGearOAuth2Tests' do
       inherit! :search_paths

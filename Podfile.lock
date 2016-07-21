@@ -17,14 +17,23 @@ PODS:
     - OHHTTPStubs/Core
 
 DEPENDENCIES:
-  - AeroGearHttp (= 0.6.0)
+  - AeroGearHttp (from `https://github.com/410Labs/aerogear-ios-http.git`)
   - OHHTTPStubs (= 5.1.0)
   - OHHTTPStubs/Swift (= 5.1.0)
+
+EXTERNAL SOURCES:
+  AeroGearHttp:
+    :git: https://github.com/410Labs/aerogear-ios-http.git
+
+CHECKOUT OPTIONS:
+  AeroGearHttp:
+    :commit: 0b4d61aa114700a2e67ed048f7cf4a874714c771
+    :git: https://github.com/410Labs/aerogear-ios-http.git
 
 SPEC CHECKSUMS:
   AeroGearHttp: e958f301cc2d1c7fbfd4b61af187ea3490040a48
   OHHTTPStubs: 592f74439d2d72615115cf99a954237a3fbe26e5
 
-PODFILE CHECKSUM: c0375e3a08eed526af934a7c8690f1ea0ff4677e
+PODFILE CHECKSUM: 3692ee6adadd80bdb1da25df3c01b78f6021946c
 
 COCOAPODS: 1.1.0.beta.1
