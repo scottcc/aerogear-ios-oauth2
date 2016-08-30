@@ -1,5 +1,5 @@
 PODS:
-  - AeroGearHttp (0.6.0)
+  - AeroGearHttp (0.7.0)
   - OHHTTPStubs (5.1.0):
     - OHHTTPStubs/Default (= 5.1.0)
   - OHHTTPStubs/Core (5.1.0)
@@ -27,11 +27,11 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AeroGearHttp:
-    :commit: 0b4d61aa114700a2e67ed048f7cf4a874714c771
+    :commit: 2decfebcf9f95bd827f5f4dcf46706fcdb6ff01d
     :git: https://github.com/410Labs/aerogear-ios-http.git
 
 SPEC CHECKSUMS:
-  AeroGearHttp: e958f301cc2d1c7fbfd4b61af187ea3490040a48
+  AeroGearHttp: 4660c8bf5b56cd00a3b75d7c5ecf94774469df5c
   OHHTTPStubs: 592f74439d2d72615115cf99a954237a3fbe26e5
 
 PODFILE CHECKSUM: 3692ee6adadd80bdb1da25df3c01b78f6021946c
