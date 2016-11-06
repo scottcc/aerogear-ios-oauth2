@@ -27,7 +27,7 @@ func setupStubKeycloakWithNSURLSessionDefaultConfiguration() {
     // set up http stub
     stub({_ in return true}, response: { (request: URLRequest!) -> OHHTTPStubsResponse in
             //_ = ["name": "John", "family_name": "Smith"]
-            switch request.url!.path! {
+            switch request.url!.path {
 
             case "/auth/realms/shoot-realm/tokens/refresh":
                 let string = "{\"access_token\":\"NEWLY_REFRESHED_ACCESS_TOKEN\", \"refresh_token\":\"\(KEYCLOAK_TOKEN)\",\"expires_in\":23}"

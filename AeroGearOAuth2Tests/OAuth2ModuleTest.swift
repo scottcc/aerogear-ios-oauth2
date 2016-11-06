@@ -25,7 +25,7 @@ func setupStubWithNSURLSessionDefaultConfiguration() {
     // set up http stub
     stub({_ in return true}, response: { (request: URLRequest!) -> OHHTTPStubsResponse in
             let stubJsonResponse = ["name": "John", "family_name": "Smith"]
-            switch request.url!.path! {
+            switch request.url!.path {
             case "/plus/v1/people/me/openIdConnect":
                 let data = try! JSONSerialization.data(withJSONObject: stubJsonResponse, options: JSONSerialization.WritingOptions())
                 return OHHTTPStubsResponse(data:data, statusCode: 200, headers: ["Content-Type" : "text/json"])
@@ -50,7 +50,7 @@ func setupStubWithNSURLSessionDefaultConfiguration() {
 func setupStubWithNSURLSessionDefaultConfigurationWithoutRefreshTokenIssued() {
     // set up http stub
     stub({_ in return true}, response: { (request: URLRequest!) -> OHHTTPStubsResponse in
-            switch request.url!.path! {
+            switch request.url!.path {
             case "/o/oauth2/token":
                 let string = "{\"access_token\":\"ACCESS_TOKEN\"}"
                 let data = string.data(using: String.Encoding.utf8)
@@ -193,6 +193,6 @@ class OAuth2ModuleTests: XCTestCase {
         }
 
         let urlString = oauth2Module.webView!.targetURL.absoluteString
-        XCTAssertNotNil(urlString.rangeOfString("audience"), "If URL string doesn't contain an audience field")
+        XCTAssertNotNil(urlString.range(of: "audience"), "If URL string doesn't contain an audience field")
     }
 }
