@@ -56,7 +56,7 @@ public class KeychainWrap {
     :param: serviceId unique service, defulated to bundleId
     :param: groupId used for SSO between app issued from same developer certificate.
     */
-    public init(serviceId: String? =  NSBundle.mainBundle().bundleIdentifier, groupId: String? = nil) {
+    public init(serviceId: String? =  Bundle.main.bundleIdentifier, groupId: String? = nil) {
         if serviceId == nil {
             self.serviceIdentifier = "unkown"
         } else {
@@ -73,7 +73,7 @@ public class KeychainWrap {
     :param: value string value of the token.
     */
     public func save(key: String, tokenType: TokenType, value: String) -> Bool {
-        let dataFromString: NSData? = value.dataUsingEncoding(NSUTF8StringEncoding)
+        let dataFromString: Data? = value.data(using: String.Encoding.utf8)
         if (dataFromString == nil) {
             return false
         }
@@ -157,9 +157,11 @@ public class KeychainWrap {
         keychainQuery[kSecReturnData as String] = true
         keychainQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
 
-        var dataTypeRef: Unmanaged<AnyObject>?
+        var dataTypeRef: AnyObject?
         // Search for the keychain items
-        let status: OSStatus = withUnsafeMutablePointer(&dataTypeRef) { SecItemCopyMatching(keychainQuery as CFDictionaryRef, UnsafeMutablePointer($0)) }
+        let status: OSStatus = withUnsafeMutablePointer(to: &dataTypeRef) {
+            SecItemCopyMatching(keychainQuery as CFDictionary, $0)
+        }
 
         if (status == errSecItemNotFound) {
             print("\(tokenType.rawValue) not found")
@@ -169,13 +171,12 @@ public class KeychainWrap {
             return nil
         }
 
-        let opaque = dataTypeRef?.toOpaque()
+        var opaque = dataTypeRef
         var contentsOfKeychain: String?
+        let retrievedData = Unmanaged<NSData>.fromOpaque(&opaque).takeUnretainedValue()
         if let op = opaque {
-            let retrievedData = Unmanaged<NSData>.fromOpaque(op).takeUnretainedValue()
-
             // Convert the data retrieved from the keychain into a string
-            contentsOfKeychain = NSString(data: retrievedData, encoding: NSUTF8StringEncoding) as? String
+            contentsOfKeychain = NSString(data: retrievedData as Data, encoding: String.Encoding.utf8.rawValue) as? String
         } else {
             print("Nothing was retrieved from the keychain. Status code \(status)")
         }
@@ -187,11 +188,11 @@ public class KeychainWrap {
     Clear all keychain entries. Note that Keychain can only be cleared programmatically.
     */
     public func resetKeychain() -> Bool {
-        return self.deleteAllKeysForSecClass(kSecClassGenericPassword) &&
-            self.deleteAllKeysForSecClass(kSecClassInternetPassword) &&
-            self.deleteAllKeysForSecClass(kSecClassCertificate) &&
-            self.deleteAllKeysForSecClass(kSecClassKey) &&
-            self.deleteAllKeysForSecClass(kSecClassIdentity)
+        return self.deleteAllKeysForSecClass(secClass: kSecClassGenericPassword) &&
+            self.deleteAllKeysForSecClass(secClass: kSecClassInternetPassword) &&
+            self.deleteAllKeysForSecClass(secClass: kSecClassCertificate) &&
+            self.deleteAllKeysForSecClass(secClass: kSecClassKey) &&
+            self.deleteAllKeysForSecClass(secClass: kSecClassIdentity)
     }
 
     func deleteAllKeysForSecClass(secClass: CFTypeRef) -> Bool {
@@ -219,20 +220,20 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
     /**
     The access token's expiration date.
     */
-    public var accessTokenExpirationDate: NSDate? {
+    public var accessTokenExpirationDate: Date? {
         get {
-            let dateAsString = self.keychain.read(self.accountId, tokenType: .ExpirationDate)
+            let dateAsString = self.keychain.read(userAccount: self.accountId, tokenType: .ExpirationDate)
             if let unwrappedDate: String = dateAsString {
-                return NSDate(dateString: unwrappedDate)
+                return Date(dateString: unwrappedDate) as Date?
             } else {
                 return nil
             }
         }
         set(value) {
             if let unwrappedValue = value {
-                self.keychain.save(self.accountId, tokenType: .ExpirationDate, value: unwrappedValue.toString())
+                _ = self.keychain.save(key: self.accountId, tokenType: .ExpirationDate, value: unwrappedValue.toString())
             } else {
-                self.keychain.delete(self.accountId, tokenType: .ExpirationDate)
+                _ = self.keychain.delete(key: self.accountId, tokenType: .ExpirationDate)
             }
         }
     }
@@ -242,13 +243,13 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
     */
     public var accessToken: String? {
         get {
-            return self.keychain.read(self.accountId, tokenType: .AccessToken)
+            return self.keychain.read(userAccount: self.accountId, tokenType: .AccessToken)
         }
         set(value) {
             if let unwrappedValue = value {
-                self.keychain.save(self.accountId, tokenType: .AccessToken, value: unwrappedValue)
+                _ = self.keychain.save(key: self.accountId, tokenType: .AccessToken, value: unwrappedValue)
             } else {
-                self.keychain.delete(self.accountId, tokenType: .AccessToken)
+                _ = self.keychain.delete(key: self.accountId, tokenType: .AccessToken)
             }
         }
     }
@@ -258,13 +259,13 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
     */
     public var refreshToken: String? {
         get {
-            return self.keychain.read(self.accountId, tokenType: .RefreshToken)
+            return self.keychain.read(userAccount: self.accountId, tokenType: .RefreshToken)
         }
         set(value) {
             if let unwrappedValue = value {
-                self.keychain.save(self.accountId, tokenType: .RefreshToken, value: unwrappedValue)
+                _ = self.keychain.save(key: self.accountId, tokenType: .RefreshToken, value: unwrappedValue)
             } else {
-                self.keychain.delete(self.accountId, tokenType: .RefreshToken)
+                _ = self.keychain.delete(key: self.accountId, tokenType: .RefreshToken)
             }
         }
     }
@@ -272,20 +273,20 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
     /**
     The refresh token's expiration date.
     */
-    public var refreshTokenExpirationDate: NSDate? {
+    public var refreshTokenExpirationDate: Date? {
         get {
-            let dateAsString = self.keychain.read(self.accountId, tokenType: .RefreshExpirationDate)
+            let dateAsString = self.keychain.read(userAccount: self.accountId, tokenType: .RefreshExpirationDate)
             if let unwrappedDate: String = dateAsString {
-                return NSDate(dateString: unwrappedDate)
+                return Date(dateString: unwrappedDate)
             } else {
                 return nil
             }
         }
         set(value) {
             if let unwrappedValue = value {
-                _ = self.keychain.save(self.accountId, tokenType: .RefreshExpirationDate, value: unwrappedValue.toString())
+                _ = self.keychain.save(key: self.accountId, tokenType: .RefreshExpirationDate, value: unwrappedValue.toString())
             } else {
-                self.keychain.delete(self.accountId, tokenType: .RefreshExpirationDate)
+                _ = self.keychain.delete(key: self.accountId, tokenType: .RefreshExpirationDate)
             }
         }
     }
@@ -295,11 +296,11 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
     */
     public var idToken: String? {
         get {
-            return self.keychain.read(self.accountId, tokenType: .IdToken)
+            return self.keychain.read(userAccount: self.accountId, tokenType: .IdToken)
         }
         set(value) {
             if let unwrappedValue = value {
-                self.keychain.save(self.accountId, tokenType: .IdToken, value: unwrappedValue)
+                _ = self.keychain.save(key: self.accountId, tokenType: .IdToken, value: unwrappedValue)
             }
         }
     }
@@ -310,30 +311,30 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
     Check validity of accessToken. return true if still valid, false when expired.
     */
     public func tokenIsNotExpired() -> Bool {
-        return  self.accessTokenExpirationDate != nil ? (self.accessTokenExpirationDate!.timeIntervalSinceDate(NSDate()) > 0) : true
+        return  self.accessTokenExpirationDate != nil ? (self.accessTokenExpirationDate!.timeIntervalSince(Date()) > 0) : true
     }
 
     /**
     Check validity of refreshToken. return true if still valid, false when expired.
     */
     public func refreshTokenIsNotExpired() -> Bool {
-        return  self.refreshTokenExpirationDate != nil ? (self.refreshTokenExpirationDate!.timeIntervalSinceDate(NSDate()) > 0) : true
+        return  self.refreshTokenExpirationDate != nil ? (self.refreshTokenExpirationDate!.timeIntervalSince(Date()) > 0) : true
     }
 
     /**
     Save in memory tokens information. Saving tokens allow you to refresh accesstoken transparently for the user without prompting for grant access.
     */
-    public func saveAccessToken(accessToken: String?, refreshToken: String?, accessTokenExpiration: String?, refreshTokenExpiration: String?, idToken: String?) {
+    public func saveAccessToken(_ accessToken: String?, refreshToken: String?, accessTokenExpiration: String?, refreshTokenExpiration: String?, idToken: String?) {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
         self.idToken = idToken
 
-        let now = NSDate()
+        let now = Date()
         if let inter = accessTokenExpiration?.doubleValue {
-            self.accessTokenExpirationDate = now.dateByAddingTimeInterval(inter)
+            self.accessTokenExpirationDate = now.addingTimeInterval(inter)
         }
         if let inter = refreshTokenExpiration?.doubleValue {
-            self.refreshTokenExpirationDate = now.dateByAddingTimeInterval(inter)
+            self.refreshTokenExpirationDate = now.addingTimeInterval(inter)
         }
     }
 
@@ -361,9 +362,9 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
     public init(accountId: String,
         groupId: String? = nil,
         accessToken: String? = nil,
-        accessTokenExpirationDate: NSDate? = nil,
+        accessTokenExpirationDate: Date? = nil,
         refreshToken: String? = nil,
-        refreshTokenExpirationDate: NSDate? = nil) {
+        refreshTokenExpirationDate: Date? = nil) {
             self.accountId = accountId
             if groupId != nil {
                 self.keychain = KeychainWrap(serviceId: groupId, groupId: groupId)
@@ -380,7 +381,7 @@ public class TrustedPersistantOAuth2Session: OAuth2Session {
             }
 
             if accessToken != nil && accessTokenExpirationDate != nil {
-                self.accessTokenExpirationDate = accessTokenExpirationDate
+                self.accessTokenExpirationDate = accessTokenExpirationDate as Date?
             }
 
             if refreshToken != nil && refreshTokenExpirationDate != nil {
