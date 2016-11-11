@@ -231,8 +231,7 @@ open class OAuth2Module: AuthzModule {
 
     :param: completionHandler A block object to be executed when the request operation finishes.
     */
-   
-    open func requestAccess(_ completionHandler: @escaping (AnyObject?, NSError?) -> Swift.Void) {
+    open func requestAccess(_ completionHandler: @escaping (AnyObject?, NSError?) -> Void) {
         if (self.oauth2Session.accessToken != nil && self.oauth2Session.tokenIsNotExpired()) {
             // we already have a valid access token, nothing more to be done
             completionHandler(self.oauth2Session.accessToken! as AnyObject?, nil)
