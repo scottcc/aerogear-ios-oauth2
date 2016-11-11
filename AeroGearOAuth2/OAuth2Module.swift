@@ -307,7 +307,7 @@ open class OAuth2Module: AuthzModule {
             }
 
             self.oauth2Session.clearTokens()
-            completionHandler(response, nil)
+            completionHandler(response as AnyObject?, nil)
         })
     }
 
