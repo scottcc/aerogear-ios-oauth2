@@ -28,7 +28,7 @@ open class KeycloakOAuth2Module: OAuth2Module {
             return
         }
         let paramDict: [String:String] = [ "client_id": config.clientId, "refresh_token": self.oauth2Session.refreshToken!]
-        http.request(.POST, path: config.revokeTokenEndpoint!, parameters: paramDict as [String : AnyObject]?, completionHandler: { (response, error) in
+        http.request(.post, path: config.revokeTokenEndpoint!, parameters: paramDict as [String : AnyObject]?, completionHandler: { (response, error) in
             if (error != nil) {
                 completionHandler(nil, error)
                 return
@@ -75,7 +75,7 @@ open class KeycloakOAuth2Module: OAuth2Module {
                 paramDict["client_secret"] = config.clientSecret!
             }
 
-            http.request(.POST, path: config.refreshTokenEndpoint!, parameters: paramDict as [String : AnyObject]?, completionHandler: { (response, error) in
+            http.request(.post, path: config.refreshTokenEndpoint!, parameters: paramDict as [String : AnyObject]?, completionHandler: { (response, error) in
                 if (error != nil) {
                     completionHandler(nil, error)
                     return

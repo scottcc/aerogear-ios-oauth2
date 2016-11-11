@@ -156,7 +156,7 @@ open class OAuth2Module: AuthzModule {
                 paramDict["client_secret"] = config.clientSecret!
             }
 
-            http.request(.POST, path: config.refreshTokenEndpoint!, parameters: paramDict as [String : AnyObject]?, completionHandler: { (response, error) in
+            http.request(.post, path: config.refreshTokenEndpoint!, parameters: paramDict as [String : AnyObject]?, completionHandler: { (response, error) in
                 if (error != nil) {
                     completionHandler(nil, error)
                     return
@@ -195,7 +195,7 @@ open class OAuth2Module: AuthzModule {
             paramDict["audience"] = audience
         }
 
-        http.request(.POST, path: config.accessTokenEndpoint, parameters: paramDict as [String : AnyObject]?, completionHandler: {(responseObject, error) in
+        http.request(.post, path: config.accessTokenEndpoint, parameters: paramDict as [String : AnyObject]?, completionHandler: {(responseObject, error) in
             if (error != nil) {
                 completionHandler(nil, error)
                 return
@@ -264,7 +264,7 @@ open class OAuth2Module: AuthzModule {
             }
             if let userInfoEndpoint = self.config.userInfoEndpoint {
 
-                self.http.request(.GET, path:userInfoEndpoint, parameters: paramDict as [String : AnyObject]?, completionHandler: {(responseObject, error) in
+                self.http.request(.get, path:userInfoEndpoint, parameters: paramDict as [String : AnyObject]?, completionHandler: {(responseObject, error) in
                     if (error != nil) {
                         completionHandler(nil, nil, error)
                         return
@@ -300,7 +300,7 @@ open class OAuth2Module: AuthzModule {
         }
         let paramDict: [String:String] = ["token":self.oauth2Session.accessToken!]
 
-        http.request(.POST, path: config.revokeTokenEndpoint!, parameters: paramDict as [String : AnyObject]?, completionHandler: { (response, error) in
+        http.request(.post, path: config.revokeTokenEndpoint!, parameters: paramDict as [String : AnyObject]?, completionHandler: { (response, error) in
             if (error != nil) {
                 completionHandler(nil, error)
                 return
