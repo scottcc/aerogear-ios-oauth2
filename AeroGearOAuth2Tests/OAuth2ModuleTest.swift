@@ -21,9 +21,13 @@ import XCTest
 import AeroGearHttp
 import OHHTTPStubs
 
+public func stub(condition: @escaping OHHTTPStubsTestBlock, response: @escaping OHHTTPStubsResponseBlock) -> OHHTTPStubsDescriptor {
+    return OHHTTPStubs.stubRequests(passingTest: condition, withStubResponse: response)
+}
+
 func setupStubWithNSURLSessionDefaultConfiguration() {
     // set up http stub
-    stub({_ in return true}, response: { (request: URLRequest!) -> OHHTTPStubsResponse in
+    _ = stub(condition: {_ in return true}, response: { (request: URLRequest!) -> OHHTTPStubsResponse in
             let stubJsonResponse = ["name": "John", "family_name": "Smith"]
             switch request.url!.path {
             case "/plus/v1/people/me/openIdConnect":
@@ -49,7 +53,7 @@ func setupStubWithNSURLSessionDefaultConfiguration() {
 
 func setupStubWithNSURLSessionDefaultConfigurationWithoutRefreshTokenIssued() {
     // set up http stub
-    stub({_ in return true}, response: { (request: URLRequest!) -> OHHTTPStubsResponse in
+    _ = stub(condition: {_ in return true}, response: { (request: URLRequest!) -> OHHTTPStubsResponse in
             switch request.url!.path {
             case "/o/oauth2/token":
                 let string = "{\"access_token\":\"ACCESS_TOKEN\"}"
