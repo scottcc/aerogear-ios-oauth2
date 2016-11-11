@@ -90,7 +90,7 @@ open class FacebookOAuth2Module: OAuth2Module {
             }
 
             self.oauth2Session.clearTokens()
-            completionHandler(response!, nil)
+            completionHandler(response! as AnyObject?, nil)
         })
     }
 
