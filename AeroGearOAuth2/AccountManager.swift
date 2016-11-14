@@ -27,7 +27,7 @@ open class FacebookConfig: Config {
     :param: clientSecret OAuth2 credentials an unique string that is generated in the OAuth2 provider Developers Console.
     :param: scopes an array of scopes the app is asking access to.
     :param: accountId this unique id is used by AccountManager to identify the OAuth2 client.
-    :paream: isOpenIDConnect to identify if fetching id information is required.
+    :param: isOpenIDConnect to identify if fetching id information is required.
     */
     public init(clientId: String, clientSecret: String, scopes: [String], accountId: String? = nil, isOpenIDConnect: Bool = false) {
         super.init(base: "",
@@ -60,7 +60,7 @@ open class GoogleConfig: Config {
     :param: clientId OAuth2 credentials an unique string that is generated in the OAuth2 provider Developers Console.
     :param: scopes an array of scopes the app is asking access to.
     :param: accountId this unique id is used by AccountManager to identify the OAuth2 client.
-    :paream: isOpenIDConnect to identify if fetching id information is required.
+    :param: isOpenIDConnect to identify if fetching id information is required.
     */
     public init(clientId: String, scopes: [String], audienceId: String? = nil, accountId: String? = nil, isOpenIDConnect: Bool = false) {
         let bundleString = Bundle.main.bundleIdentifier ?? "google"
@@ -93,7 +93,7 @@ open class KeycloakConfig: Config {
     :param: clientId OAuth2 credentials an unique string that is generated in the OAuth2 provider Developers Console.
     :param: host to identify where is the keycloak server located.
     :param: realm to identify which realm to use. A realm grup a set of application/oauth2 client together.
-    :paream: isOpenIDConnect to identify if fetching id information is required.
+    :parem: isOpenIDConnect to identify if fetching id information is required.
     */
     public init(clientId: String, host: String, realm: String? = nil, isOpenIDConnect: Bool = false) {
         let bundleString = Bundle.main.bundleIdentifier ?? "keycloak"
