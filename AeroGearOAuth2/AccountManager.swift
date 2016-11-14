@@ -94,9 +94,11 @@ open class KeycloakConfig: Config {
     :param: host to identify where is the keycloak server located.
     :param: realm to identify which realm to use. A realm grup a set of application/oauth2 client together.
     :parem: isOpenIDConnect to identify if fetching id information is required.
+    :param: redirectProtocol if set, will be used instead of NSBundle.mainBundle().bundleIdentifierd
+    @note The reason for the redirectProtocol parameter is that the current (2.3.0) version of keycloak seems to balk at bundlenames like com.scottcc.MyAwesomeApp-Dev://oauth2Callback.
     */
-    public init(clientId: String, host: String, realm: String? = nil, isOpenIDConnect: Bool = false) {
-        let bundleString = Bundle.main.bundleIdentifier ?? "keycloak"
+    public init(clientId: String, host: String, realm: String? = nil, isOpenIDConnect: Bool = false, redirectProtocol: String? = nil) {
+        let bundleString = redirectProtocol ?? NSBundle.mainBundle().bundleIdentifier ?? "keycloak"
         let defaulRealmName = String(format: "%@-realm", clientId)
         let realm = realm ?? defaulRealmName
         super.init(
