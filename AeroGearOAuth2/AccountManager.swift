@@ -98,7 +98,7 @@ open class KeycloakConfig: Config {
     @note The reason for the redirectProtocol parameter is that the current (2.3.0) version of keycloak seems to balk at bundlenames like com.scottcc.MyAwesomeApp-Dev://oauth2Callback.
     */
     public init(clientId: String, host: String, realm: String? = nil, isOpenIDConnect: Bool = false, redirectProtocol: String? = nil) {
-        let bundleString = redirectProtocol ?? NSBundle.mainBundle().bundleIdentifier ?? "keycloak"
+        let bundleString = redirectProtocol ?? Bundle.main.bundleIdentifier ?? "keycloak"
         let defaulRealmName = String(format: "%@-realm", clientId)
         let realm = realm ?? defaulRealmName
         super.init(
