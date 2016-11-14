@@ -154,13 +154,14 @@ public class KeychainWrap {
         keychainQuery[kSecClass as String] = kSecClassGenericPassword
         keychainQuery[kSecAttrService as String] = self.serviceIdentifier
         keychainQuery[kSecAttrAccount as String] = userAccount + "_" + tokenType.rawValue
-        keychainQuery[kSecReturnData as String] = true
+        keychainQuery[kSecMatchLimit as String] = kSecMatchLimitOne
+        keychainQuery[kSecReturnData as String] = kCFBooleanTrue
         keychainQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
 
         var dataTypeRef: AnyObject?
         // Search for the keychain items
         let status: OSStatus = withUnsafeMutablePointer(to: &dataTypeRef) {
-            SecItemCopyMatching(keychainQuery as CFDictionary, $0)
+            SecItemCopyMatching(keychainQuery as CFDictionary, UnsafeMutablePointer($0))
         }
 
         if (status == errSecItemNotFound) {
@@ -171,17 +172,11 @@ public class KeychainWrap {
             return nil
         }
 
-        var opaque = dataTypeRef
-        var contentsOfKeychain: String?
-        let retrievedData = Unmanaged<NSData>.fromOpaque(&opaque).takeUnretainedValue()
-        if let op = opaque {
-            // Convert the data retrieved from the keychain into a string
-            contentsOfKeychain = NSString(data: retrievedData as Data, encoding: String.Encoding.utf8.rawValue) as? String
-        } else {
-            print("Nothing was retrieved from the keychain. Status code \(status)")
+        guard let keychainData = dataTypeRef as? Data else {
+            return nil
         }
 
-        return contentsOfKeychain
+        return String(data: keychainData, encoding: String.Encoding.utf8) as String?
     }
 
     /**
