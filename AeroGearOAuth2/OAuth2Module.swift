@@ -129,8 +129,8 @@ open class OAuth2Module: AuthzModule {
             params = "\(params)&audience=\(audienceId)"
         }
         
-        if let extendedParams = config.additionalAuthCodeParams, !extendedParams.isEmpty {
-            for (key, value) in extendedParams {
+        if !config.additionalAuthCodeParams.isEmpty {
+            for (key, value) in config.additionalAuthCodeParams {
                 params = "\(params)&\(key.urlEncode())=\(value.urlEncode())"
             }
         }
