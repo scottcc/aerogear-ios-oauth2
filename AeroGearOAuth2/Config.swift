@@ -109,6 +109,14 @@ open class Config {
     open var isWebView: Bool = false
 
     /**
+     Can be used to tack additional parameters on. One use case is with keycloak identity provider
+     hinting. That is, using something like "kc_idp_hint=facebook" allows going directly to the 
+     identity provider instead of hitting keycloak first.
+     */
+    open var additionalAuthCodeParams: [String: String] = [:]
+
+    
+    /**
     A handler to allow the webview to be pushed onto the navigation controller
     */
     open var webViewHandler: ((OAuth2WebViewController, _ completionHandler: (AnyObject?, NSError?) -> Void) -> ()) = {
